@@ -1,6 +1,6 @@
-MEDIADIR=/home/markham/gPodder/Downloads/Nakamura-144037
+PLAYLIST_FILE=/home/markham/gPodder/Downloads/Nakamura-144037/playlist.m3u
+LOG_FILE=/home/markham/gPodder/log.txt
 SLEEP_TIME=$((3 * 60 * 60))
-LOG_FILE=~markham/gPodder/sleep-player.log
 TARGET_VOLUME=36
 FADE_SLEEP_TIME=0.2
 
@@ -23,7 +23,7 @@ VOLUME=0
 # Start player in background
 printf "Starting smplayer... \t" >> $LOG_FILE
 date >> $LOG_FILE
-smplayer $MEDIADIR/playlist.m3u -actions "normal_speed dec_speed dec_speed_4 dec_speed_1 dec_speed_1 play" &
+smplayer "$PLAYLIST_FILE" -actions "normal_speed dec_speed dec_speed_4 dec_speed_1 dec_speed_1 play" &
 
 # Fade in volume
 while [ $VOLUME -lt $TARGET_VOLUME ]; do
@@ -52,6 +52,9 @@ while pid=$(ps -C smplayer | tail -n-1 | cut -d' ' -f1) && ! [[ -z $pid ]]; do
 	echo killed $pid
 done
 echo >> $LOG_FILE
+
+# Restore original volume
+set_vol $ORIG_VOLUME
 
 # Suspend computer (optionatl)
 (($NO_SLEEP)) || systemctl suspend
